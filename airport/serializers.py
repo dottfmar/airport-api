@@ -13,9 +13,6 @@ class AirplaneTypeSerializer(serializers.ModelSerializer):
 
 
 class AirplaneSerializer(serializers.ModelSerializer):
-    airplane_type = serializers.StringRelatedField(
-        source="airplane_type.name",
-    )
     class Meta:
         model = Airplane
         fields = [
@@ -26,3 +23,13 @@ class AirplaneSerializer(serializers.ModelSerializer):
             "airplane_type",
             "total_number_of_seats",
         ]
+
+
+class AirplaneListSerializer(AirplaneSerializer):
+    airplane_type = serializers.StringRelatedField(
+        source="airplane_type.name",
+        read_only=True
+    )
+
+class AirplaneDetailSerializer(AirplaneSerializer):
+    airplane_type = AirplaneTypeSerializer(read_only=True)
