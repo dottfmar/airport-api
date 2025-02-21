@@ -83,11 +83,11 @@ class Airport(models.Model):
 
         c = 2 * math.asin(math.sqrt(a))
 
-        return earth_radius * c
+        return round(earth_radius * c)
 
 
     def __str__(self):
-        return f"Airport: {self.name}, city: {self.city}, country: {self.country}"
+        return f"{self.name},({self.city}, {self.country})"
 
 class Route(models.Model):
     source = models.ForeignKey(Airport, on_delete=models.CASCADE, related_name="source")
