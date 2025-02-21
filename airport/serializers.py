@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from airport.models import AirplaneType, Airplane
+from airport.models import AirplaneType, Airplane, Crew
 
 
 class AirplaneTypeSerializer(serializers.ModelSerializer):
@@ -33,3 +33,27 @@ class AirplaneListSerializer(AirplaneSerializer):
 
 class AirplaneDetailSerializer(AirplaneSerializer):
     airplane_type = AirplaneTypeSerializer(read_only=True)
+
+
+class CrewSerializer(serializers.ModelSerializer):
+    role = serializers.ChoiceField(choices=Crew.Roles.choices, source="get_role_display")
+    class Meta:
+        model = Crew
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "role",
+            "full_name",
+        ]
+
+
+
+class CrewListSerializer(CrewSerializer):
+    class Meta:
+        model = Crew
+        fields = [
+            "id",
+            "full_name",
+            "role",
+        ]

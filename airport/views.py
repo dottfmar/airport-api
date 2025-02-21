@@ -1,7 +1,8 @@
 from rest_framework import viewsets, filters
 
-from airport.models import Airplane
-from airport.serializers import AirplaneSerializer, AirplaneListSerializer, AirplaneDetailSerializer
+from airport.models import Airplane, Crew
+from airport.serializers import AirplaneSerializer, AirplaneListSerializer, AirplaneDetailSerializer, CrewSerializer, \
+    CrewListSerializer
 
 
 class AirplaneViewSet(viewsets.ModelViewSet):
@@ -17,3 +18,13 @@ class AirplaneViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return AirplaneDetailSerializer
         return AirplaneSerializer
+
+
+class CrewViewSet(viewsets.ModelViewSet):
+    queryset = Crew.objects.all()
+    serializer_class = CrewSerializer
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return CrewListSerializer
+        return CrewSerializer
