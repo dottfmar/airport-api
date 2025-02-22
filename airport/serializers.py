@@ -115,3 +115,74 @@ class RouteSerializer(serializers.ModelSerializer):
 class RouteDetailSerializer(RouteSerializer):
     source = AirportListSerializer(read_only=True)
     destination = AirportListSerializer(read_only=True)
+
+
+class FlightSerializer(serializers.ModelSerializer):
+    route = serializers.SlugRelatedField(
+        queryset=Route.objects.all(),
+        slug_field="id",
+    )
+    airplane = serializers.SlugRelatedField(
+        slug_field="name",
+        queryset=Airplane.objects.all(),
+    )
+    crew = serializers.PrimaryKeyRelatedField(queryset=Crew.objects.all(), many=True)
+
+    class Meta:
+        model = Flight
+        fields = [
+            "id",
+            "route",
+            "airplane",
+            "departure_time",
+            "arrival_time",
+            "crew",
+        ]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        route = instance.route
+        formatted_route = f"{route.source.city} ({route.source.country}) -> {route.destination.city} ({route.destination.country})"
+        representation['route'] = formatted_route
+        return representation
+
+    def create(self, validated_data):
+        crew_data = validated_data.pop('crew')
+        flight = Flight.objects.create(**validated_data)
+        flight.crew.set(crew_data)
+        return flight
+
+    def update(self, instance, validated_data):
+        crew_data = validated_data.pop('crew', None)
+        instance = super().update(instance, validated_data)
+        if crew_data is not None:
+            instance.crew.set(crew_data)
+        return instance
+
+class FlightListSerializer(FlightSerializer):
+    crew = CrewListSerializer(read_only=True, many=True)
+    class Meta:
+        model = Flight
+        fields = [
+            "id",
+            "route",
+            "airplane",
+            "departure_time",
+            "arrival_time",
+            "crew",
+        ]
+
+class FlightDetailSerializer(serializers.ModelSerializer):
+    route = RouteSerializer(read_only=True)
+    airplane = AirplaneListSerializer(read_only=True)
+    crew = CrewSerializer(read_only=True, many=True)
+    class Meta:
+        model = Flight
+        fields = [
+            "id",
+            "route",
+            "airplane",
+            "departure_time",
+            "arrival_time",
+            "crew",
+        ]

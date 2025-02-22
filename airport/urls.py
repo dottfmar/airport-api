@@ -8,6 +8,7 @@ router.register("airplanes", views.AirplaneViewSet)
 router.register("crews", views.CrewViewSet)
 router.register("airports", views.AirportViewSet)
 router.register("routes", views.RouteViewSet)
+router.register("flights", views.FlightViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

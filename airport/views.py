@@ -3,7 +3,8 @@ from rest_framework.pagination import PageNumberPagination
 
 from airport.models import Airplane, Crew, Airport, Route, Flight
 from airport.serializers import AirplaneSerializer, AirplaneListSerializer, AirplaneDetailSerializer, CrewSerializer, \
-    CrewListSerializer, AirportSerializer, AirportListSerializer, RouteSerializer, RouteDetailSerializer
+    CrewListSerializer, AirportSerializer, AirportListSerializer, RouteSerializer, RouteDetailSerializer, \
+    FlightSerializer, FlightListSerializer, FlightDetailSerializer
 
 
 class ObjectPagination(PageNumberPagination):
@@ -60,3 +61,13 @@ class RouteViewSet(viewsets.ModelViewSet):
         return RouteSerializer
 
 
+class FlightViewSet(viewsets.ModelViewSet):
+    queryset = Flight.objects.all()
+    serializer_class = FlightSerializer
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return FlightListSerializer
+        if self.action == "retrieve":
+            return FlightDetailSerializer
+        return FlightSerializer
