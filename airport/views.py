@@ -3,8 +3,7 @@ from rest_framework.pagination import PageNumberPagination
 
 from airport.models import Airplane, Crew, Airport, Route, Flight
 from airport.serializers import AirplaneSerializer, AirplaneListSerializer, AirplaneDetailSerializer, CrewSerializer, \
-    CrewListSerializer, AirportSerializer, AirportListSerializer, RouteSerializer, RouteDetailSerializer, \
-    FlightListSerializer
+    CrewListSerializer, AirportSerializer, AirportListSerializer, RouteSerializer, RouteDetailSerializer
 
 
 class ObjectPagination(PageNumberPagination):

@@ -44,7 +44,8 @@ class AirplaneDetailSerializer(AirplaneSerializer):
 
 
 class CrewSerializer(serializers.ModelSerializer):
-    role = serializers.ChoiceField(choices=Crew.Roles.choices, source="get_role_display")
+    role = serializers.ChoiceField(choices=Crew.Roles.choices)
+
     class Meta:
         model = Crew
         fields = [
@@ -57,6 +58,7 @@ class CrewSerializer(serializers.ModelSerializer):
 
 
 class CrewListSerializer(CrewSerializer):
+    role = serializers.SerializerMethodField()
     class Meta:
         model = Crew
         fields = [
@@ -64,6 +66,8 @@ class CrewListSerializer(CrewSerializer):
             "full_name",
             "role",
         ]
+    def get_role(self, obj):
+        return obj.get_role_display()
 
 
 class AirportSerializer(serializers.ModelSerializer):
