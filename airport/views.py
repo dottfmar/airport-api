@@ -62,7 +62,7 @@ class RouteViewSet(viewsets.ModelViewSet):
 
 
 class FlightViewSet(viewsets.ModelViewSet):
-    queryset = Flight.objects.all()
+    queryset = Flight.objects.prefetch_related("crew").select_related("airplane").select_related("route")
     serializer_class = FlightSerializer
     pagination_class = ObjectPagination
 
@@ -72,6 +72,7 @@ class FlightViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return FlightDetailSerializer
         return FlightSerializer
+
 
 
 class OrderViewSet(viewsets.ModelViewSet):

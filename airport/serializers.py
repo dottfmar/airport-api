@@ -122,13 +122,13 @@ class RouteDetailSerializer(RouteSerializer):
 
 class FlightSerializer(serializers.ModelSerializer):
     route = serializers.SlugRelatedField(
-        queryset=Route.objects.all(),
+        queryset=Route.objects.all().select_related("source", "destination"),
         slug_field="id",
 
     )
     airplane = serializers.SlugRelatedField(
         slug_field="name",
-        queryset=Airplane.objects.all(),
+        queryset=Airplane.objects.all().select_related("airplane_type"),
     )
     crew = serializers.PrimaryKeyRelatedField(queryset=Crew.objects.all(), many=True)
 
