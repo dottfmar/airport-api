@@ -1,6 +1,8 @@
 import math
 
 from django.db import models
+from django.db.models import Q
+from rest_framework.exceptions import ValidationError
 
 from airport_service import settings
 
@@ -55,6 +57,14 @@ class Flight(models.Model):
     arrival_time = models.DateTimeField()
     crew = models.ManyToManyField(Crew, related_name="flights")
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["route", "airplane", "departure_time", "arrival_time"],
+                name="unique_flight_per_time"
+            ),
+        ]
+
     def __str__(self):
         return f"Flight: {self.route}, airplane: {self.airplane}"
 
@@ -106,6 +116,15 @@ class Ticket(models.Model):
     seat = models.IntegerField()
     flight = models.ForeignKey("Flight", on_delete=models.CASCADE, related_name="tickets")
     order = models.ForeignKey("Order", on_delete=models.CASCADE, related_name="tickets")
+
+    @staticmethod
+    def validate_value(value: int, max_value: int, error_message: str, error_to_raise):
+        if not (1 <= value <= max_value):
+            raise error_to_raise({error_message})
+
+    def clean(self):
+        Ticket.validate_value(self.seat, self.flight.airplane.seats_in_row, "Invalid seat number", ValueError)
+        Ticket.validate_value(self.row, self.flight.airplane.rows, "Invalid row number", ValueError)
 
     class Meta:
         unique_together = ["row", "seat", "flight"]

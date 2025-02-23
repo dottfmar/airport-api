@@ -1,5 +1,7 @@
 from django.db import transaction
+from django.db.models import Q
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from airport.models import AirplaneType, Airplane, Crew, Airport, Route, Flight, Ticket, Order
 
@@ -122,6 +124,7 @@ class FlightSerializer(serializers.ModelSerializer):
     route = serializers.SlugRelatedField(
         queryset=Route.objects.all(),
         slug_field="id",
+
     )
     airplane = serializers.SlugRelatedField(
         slug_field="name",
@@ -140,17 +143,11 @@ class FlightSerializer(serializers.ModelSerializer):
             "crew",
         ]
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        route = instance.route
-        formatted_route = f"{route.source.city} ({route.source.country}) -> {route.destination.city} ({route.destination.country})"
-        representation['route'] = formatted_route
-        return representation
-
     def create(self, validated_data):
         crew_data = validated_data.pop('crew')
         flight = Flight.objects.create(**validated_data)
         flight.crew.set(crew_data)
+        self.validate_crew_availability(flight)
         return flight
 
     def update(self, instance, validated_data):
@@ -158,7 +155,18 @@ class FlightSerializer(serializers.ModelSerializer):
         instance = super().update(instance, validated_data)
         if crew_data is not None:
             instance.crew.set(crew_data)
+        self.validate_crew_availability(instance)
         return instance
+
+    def validate_crew_availability(self, flight):
+        overlapping_flights = Flight.objects.filter(
+            Q(departure_time__lt=flight.arrival_time, arrival_time__gt=flight.departure_time)
+        ).exclude(id=flight.id)
+
+        for crew_member in flight.crew.all():
+            busy_crew = overlapping_flights.filter(crew=crew_member)
+            if busy_crew.exists():
+                raise ValidationError(f"Some crew members is already assigned to another flight during this time.")
 
 class FlightListSerializer(FlightSerializer):
     crew = CrewListSerializer(read_only=True, many=True)
@@ -172,6 +180,13 @@ class FlightListSerializer(FlightSerializer):
             "arrival_time",
             "crew",
         ]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        route = instance.route
+        formatted_route = f"{route.source.city} ({route.source.country}) -> {route.destination.city} ({route.destination.country})"
+        representation['route'] = formatted_route
+        return representation
 
 class FlightDetailSerializer(serializers.ModelSerializer):
     route = RouteSerializer(read_only=True)
@@ -197,6 +212,21 @@ class TicketSerializer(serializers.ModelSerializer):
             "row",
             "flight",
         ]
+
+    def validate(self, attrs):
+        Ticket.validate_value(
+            attrs["seat"],
+            attrs["flight"].airplane.seats_in_row,
+            "Invalid seat number",
+            serializers.ValidationError
+        )
+
+        Ticket.validate_value(
+            attrs["row"],
+            attrs["flight"].airplane.rows,
+            "Invalid row number",
+            serializers.ValidationError
+        )
 
 class OrderSerializer(serializers.ModelSerializer):
     tickets = TicketSerializer(many=True, read_only=False, allow_empty=False)
