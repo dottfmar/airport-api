@@ -1,7 +1,10 @@
 import math
+import os
+import uuid
 
 from django.db import models
 from django.db.models import Q
+from django.utils.text import slugify
 from rest_framework.exceptions import ValidationError
 
 from airport_service import settings
@@ -14,11 +17,19 @@ class AirplaneType(models.Model):
         return self.name
 
 
+def airplane_custom_path(instance, filename):
+   _, extension = os.path.splitext(filename)
+   return os.path.join(
+       "uploads/images/",
+       f"{slugify(instance.name)}-{uuid.uuid4()}{extension}"
+   )
+
 class Airplane(models.Model):
     name = models.CharField(max_length=100)
     rows = models.IntegerField()
     seats_in_row = models.IntegerField()
     airplane_type = models.ForeignKey(AirplaneType, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=airplane_custom_path, null=True, blank=True)
 
     @property
     def total_number_of_seats(self):

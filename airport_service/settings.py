@@ -164,3 +164,6 @@ SPECTACULAR_SETTINGS = {
         "defaultModelExpandDepth": 2,
     }
 }
+
+MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "/media/"
