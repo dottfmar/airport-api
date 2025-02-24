@@ -14,3 +14,6 @@ router.register("orders", views.OrderViewSet)
 urlpatterns = [
     path('', include(router.urls)),
 ]
+
+app_name = 'airport'
+

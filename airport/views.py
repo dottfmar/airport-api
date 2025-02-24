@@ -1,8 +1,12 @@
 from django.template.defaultfilters import first
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema, OpenApiExample, OpenApiResponse
 from rest_framework import viewsets, filters
+from rest_framework.exceptions import NotFound
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, IsAdminUser
 
+from airport import examples_swagger
 from airport.permissions import IsAdminOrIfAuthenticatedReadOnly
 from airport.models import Airplane, Crew, Airport, Route, Flight, Order
 from airport.serializers import AirplaneSerializer, AirplaneListSerializer, AirplaneDetailSerializer, CrewSerializer, \
@@ -50,6 +54,14 @@ class AirplaneViewSet(viewsets.ModelViewSet):
 
         return queryset.distinct()
 
+    @extend_schema(
+        parameters=examples_swagger.airplane_get_parameters,
+        responses=examples_swagger.airplane_get_responses,
+    )
+    def list(self, request, *args, **kwargs):
+        """Retrieve a list of airplanes with optional filters."""
+        return super().list(request, *args, **kwargs)
+
 class CrewViewSet(viewsets.ModelViewSet):
     queryset = Crew.objects.all()
     serializer_class = CrewSerializer
@@ -80,6 +92,14 @@ class CrewViewSet(viewsets.ModelViewSet):
 
         return queryset.distinct()
 
+    @extend_schema(
+        parameters=examples_swagger.crew_get_parameters,
+        responses=examples_swagger.crew_get_responses,
+    )
+    def list(self, request, *args, **kwargs):
+        """Retrieve a list of crews with optional filters."""
+        return super().list(request, *args, **kwargs)
+
 class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
     serializer_class = AirportSerializer
@@ -98,7 +118,6 @@ class AirportViewSet(viewsets.ModelViewSet):
         country = self.request.query_params.get("country")
         city = self.request.query_params.get("city")
 
-
         if name:
             queryset = queryset.filter(name__icontains=name)
         if country:
@@ -107,6 +126,14 @@ class AirportViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(city__in=city.split(","))
 
         return queryset.distinct()
+
+    @extend_schema(
+        parameters=examples_swagger.airport_get_parameters,
+        responses=examples_swagger.airport_get_responses,
+    )
+    def list(self, request, *args, **kwargs):
+        """Retrieve a list of airports with optional filters."""
+        return super().list(request, *args, **kwargs)
 
 
 class RouteViewSet(viewsets.ModelViewSet):
@@ -153,7 +180,13 @@ class FlightViewSet(viewsets.ModelViewSet):
 
         return queryset.distinct()
 
-
+    @extend_schema(
+        parameters=examples_swagger.flight_get_parameters,
+        responses=examples_swagger.flight_get_responses,
+    )
+    def list(self, request, *args, **kwargs):
+        """Retrieve a list of flights with optional filters."""
+        return super().list(request, *args, **kwargs)
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
