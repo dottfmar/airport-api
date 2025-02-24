@@ -12,8 +12,7 @@ router.register("flights", views.FlightViewSet)
 router.register("orders", views.OrderViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path("", include(router.urls)),
 ]
 
-app_name = 'airport'
-
+app_name = "airport"

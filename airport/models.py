@@ -3,9 +3,7 @@ import os
 import uuid
 
 from django.db import models
-from django.db.models import Q
 from django.utils.text import slugify
-from rest_framework.exceptions import ValidationError
 
 from airport_service import settings
 
@@ -18,11 +16,11 @@ class AirplaneType(models.Model):
 
 
 def airplane_custom_path(instance, filename):
-   _, extension = os.path.splitext(filename)
-   return os.path.join(
-       "uploads/images/",
-       f"{slugify(instance.name)}-{uuid.uuid4()}{extension}"
-   )
+    _, extension = os.path.splitext(filename)
+    return os.path.join(
+        "uploads/images/", f"{slugify(instance.name)}-{uuid.uuid4()}{extension}"
+    )
+
 
 class Airplane(models.Model):
     name = models.CharField(max_length=100)
@@ -40,6 +38,7 @@ class Airplane(models.Model):
 
     def __str__(self):
         return f"{self.name}, (type: {self.airplane_type.name})"
+
 
 class Crew(models.Model):
 
@@ -72,12 +71,13 @@ class Flight(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=["route", "airplane", "departure_time", "arrival_time"],
-                name="unique_flight_per_time"
+                name="unique_flight_per_time",
             ),
         ]
 
     def __str__(self):
         return f"Flight: {self.route}, airplane: {self.airplane}"
+
 
 class Airport(models.Model):
     name = models.CharField(max_length=100)
@@ -98,25 +98,31 @@ class Airport(models.Model):
         distance_between_latitudes = latitude_2 - latitude_1
         distance_between_longitudes = longitude_2 - longitude_1
 
-        a = (math.sin(distance_between_latitudes / 2) ** 2 +
-             math.sin(distance_between_longitudes / 2) ** 2 *
-             math.cos(latitude_1) * math.cos(latitude_2))
+        a = math.sin(distance_between_latitudes / 2) ** 2 + math.sin(
+            distance_between_longitudes / 2
+        ) ** 2 * math.cos(latitude_1) * math.cos(latitude_2)
 
         c = 2 * math.asin(math.sqrt(a))
 
         return round(earth_radius * c)
 
-
     def __str__(self):
         return f"{self.name},({self.city}, {self.country})"
 
+
 class Route(models.Model):
     source = models.ForeignKey(Airport, on_delete=models.CASCADE, related_name="source")
-    destination = models.ForeignKey(Airport, on_delete=models.CASCADE, related_name="destination")
+    destination = models.ForeignKey(
+        Airport, on_delete=models.CASCADE, related_name="destination"
+    )
 
     @property
     def distance(self):
-        return self.source.calculate_distance(self.destination) if self.source and self.destination else None
+        return (
+            self.source.calculate_distance(self.destination)
+            if self.source and self.destination
+            else None
+        )
 
     def __str__(self):
         return f"{self.source.city} ({self.source.country}) -> {self.destination.city} ({self.destination.country})"
@@ -125,7 +131,9 @@ class Route(models.Model):
 class Ticket(models.Model):
     row = models.IntegerField()
     seat = models.IntegerField()
-    flight = models.ForeignKey("Flight", on_delete=models.CASCADE, related_name="tickets")
+    flight = models.ForeignKey(
+        "Flight", on_delete=models.CASCADE, related_name="tickets"
+    )
     order = models.ForeignKey("Order", on_delete=models.CASCADE, related_name="tickets")
 
     @staticmethod
@@ -134,8 +142,15 @@ class Ticket(models.Model):
             raise error_to_raise({error_message})
 
     def clean(self):
-        Ticket.validate_value(self.seat, self.flight.airplane.seats_in_row, "Invalid seat number", ValueError)
-        Ticket.validate_value(self.row, self.flight.airplane.rows, "Invalid row number", ValueError)
+        Ticket.validate_value(
+            self.seat,
+            self.flight.airplane.seats_in_row,
+            "Invalid seat number",
+            ValueError,
+        )
+        Ticket.validate_value(
+            self.row, self.flight.airplane.rows, "Invalid row number", ValueError
+        )
 
     class Meta:
         unique_together = ["row", "seat", "flight"]
@@ -147,3 +162,9 @@ class Ticket(models.Model):
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Order: {self.id}"

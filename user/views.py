@@ -10,13 +10,13 @@ from user.serializers import UserSerializer, AuthTokenSerializer
 
 
 class CreateUserView(generics.CreateAPIView):
-   serializer_class = UserSerializer
-   permission_classes = ()
+    serializer_class = UserSerializer
+    permission_classes = ()
+
 
 class ManageUserView(generics.RetrieveAPIView):
-   serializer_class = UserSerializer
-   permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = UserSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
-   def get_object(self):
-      return self.request.user
-
+    def get_object(self):
+        return self.request.user

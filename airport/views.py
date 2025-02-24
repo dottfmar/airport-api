@@ -1,24 +1,39 @@
-from django.template.defaultfilters import first
-from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import OpenApiParameter, extend_schema, OpenApiExample, OpenApiResponse
+from drf_spectacular.utils import (
+    extend_schema,
+)
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
-from rest_framework.exceptions import NotFound
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, IsAdminUser
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAdminUser,
+)
 from rest_framework.response import Response
 
 from airport import examples_swagger
 from airport.permissions import IsAdminOrIfAuthenticatedReadOnly
 from airport.models import Airplane, Crew, Airport, Route, Flight, Order
-from airport.serializers import AirplaneSerializer, AirplaneListSerializer, AirplaneDetailSerializer, CrewSerializer, \
-    CrewListSerializer, AirportSerializer, AirportListSerializer, RouteSerializer, RouteDetailSerializer, \
-    FlightSerializer, FlightListSerializer, FlightDetailSerializer, OrderSerializer, AirplaneImageSerializer
+from airport.serializers import (
+    AirplaneSerializer,
+    AirplaneListSerializer,
+    AirplaneDetailSerializer,
+    CrewSerializer,
+    CrewListSerializer,
+    AirportSerializer,
+    AirportListSerializer,
+    RouteSerializer,
+    RouteDetailSerializer,
+    FlightSerializer,
+    FlightListSerializer,
+    FlightDetailSerializer,
+    OrderSerializer,
+    AirplaneImageSerializer,
+)
 
 
 class ObjectPagination(PageNumberPagination):
     page_size = 5
-    page_size_query_param = 'per_page'
+    page_size_query_param = "per_page"
     max_page_size = 10
 
 
@@ -82,6 +97,7 @@ class AirplaneViewSet(viewsets.ModelViewSet):
         """Retrieve a list of airplanes with optional filters."""
         return super().list(request, *args, **kwargs)
 
+
 class CrewViewSet(viewsets.ModelViewSet):
     queryset = Crew.objects.all()
     serializer_class = CrewSerializer
@@ -119,6 +135,7 @@ class CrewViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         """Retrieve a list of crews with optional filters."""
         return super().list(request, *args, **kwargs)
+
 
 class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
@@ -169,7 +186,11 @@ class RouteViewSet(viewsets.ModelViewSet):
 
 
 class FlightViewSet(viewsets.ModelViewSet):
-    queryset = Flight.objects.prefetch_related("crew").select_related("airplane").select_related("route")
+    queryset = (
+        Flight.objects.prefetch_related("crew")
+        .select_related("airplane")
+        .select_related("route")
+    )
     serializer_class = FlightSerializer
     pagination_class = ObjectPagination
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
@@ -207,6 +228,7 @@ class FlightViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         """Retrieve a list of flights with optional filters."""
         return super().list(request, *args, **kwargs)
+
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()

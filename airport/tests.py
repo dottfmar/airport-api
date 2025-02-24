@@ -1,22 +1,30 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils import timezone
 from rest_framework import status
-from rest_framework.test import APIClient, APITestCase
+from rest_framework.test import APIClient
 from rest_framework.reverse import reverse
 
 from airport.models import Airport, Airplane, AirplaneType, Route, Crew, Flight
-from airport.serializers import AirplaneListSerializer, AirplaneDetailSerializer, AirportListSerializer, \
-    AirportSerializer, FlightListSerializer, FlightDetailSerializer, CrewListSerializer, \
-    CrewSerializer
+from airport.serializers import (
+    AirplaneListSerializer,
+    AirplaneDetailSerializer,
+    AirportListSerializer,
+    AirportSerializer,
+    FlightListSerializer,
+    FlightDetailSerializer,
+    CrewListSerializer,
+    CrewSerializer,
+)
 
-AIRPLANE_URL = reverse('airport:airplane-list')
-AIRPORT_URL = reverse('airport:airport-list')
-FLIGHTS_URL = reverse('airport:flight-list')
-CREW_URL = reverse('airport:crew-list')
-ROUTES_URL = reverse('airport:route-list')
+AIRPLANE_URL = reverse("airport:airplane-list")
+AIRPORT_URL = reverse("airport:airport-list")
+FLIGHTS_URL = reverse("airport:flight-list")
+CREW_URL = reverse("airport:crew-list")
+ROUTES_URL = reverse("airport:route-list")
+
 
 class UnauthenticatedAirportAPITest(TestCase):
     def setUp(self):
@@ -35,9 +43,10 @@ class UnauthenticatedAirportAPITest(TestCase):
         response = self.client.get(CREW_URL)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+
 def airplane_sample(**params):
     airplane_type = AirplaneType.objects.create(
-        name='Test Type',
+        name="Test Type",
     )
     defaults = {
         "name": "Test Name",
@@ -48,16 +57,18 @@ def airplane_sample(**params):
     defaults.update(params)
     return Airplane.objects.create(**defaults)
 
+
 def airport_sample(**params):
     defaults = {
         "name": "Test Name",
         "city": "Test City",
         "country": "Test Country",
         "latitude": 51.5007,
-        "longitude": 0.1246
+        "longitude": 0.1246,
     }
     defaults.update(params)
     return Airport.objects.create(**defaults)
+
 
 def flight_sample(**params):
     airport_1 = airport_sample()
@@ -78,11 +89,12 @@ def flight_sample(**params):
     defaults.update(params)
     return Flight.objects.create(**defaults)
 
+
 def crew_sample(**params):
     defaults = {
         "first_name": "Alex",
         "last_name": "Johnson",
-        "role": Crew.Roles.CAPTAIN
+        "role": Crew.Roles.CAPTAIN,
     }
     defaults.update(params)
     return Crew.objects.create(**defaults)
@@ -172,16 +184,13 @@ class AuthenticatedAirplaneTest(TestCase):
     def test_retrieve_airplane_by_id(self):
         airplane = airplane_sample()
 
-        url = reverse('airport:airplane-detail', args=(airplane.id,))
-
+        url = reverse("airport:airplane-detail", args=(airplane.id,))
 
         response = self.client.get(url)
         serializer = AirplaneDetailSerializer(airplane)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
-
-
 
     def test_create_airplane_forbidden(self):
         test_type = AirplaneType.objects.create(name="Test Type")
@@ -194,6 +203,7 @@ class AuthenticatedAirplaneTest(TestCase):
         response = self.client.post(AIRPLANE_URL, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
 
 class AuthenticatedAirportTest(TestCase):
     def setUp(self):
@@ -261,7 +271,7 @@ class AuthenticatedAirportTest(TestCase):
     def test_retrieve_airport_by_id(self):
         airport = airport_sample()
 
-        url = reverse('airport:airport-detail', args=(airport.id,))
+        url = reverse("airport:airport-detail", args=(airport.id,))
 
         response = self.client.get(url)
         serializer = AirportSerializer(airport)
@@ -280,6 +290,7 @@ class AuthenticatedAirportTest(TestCase):
         response = self.client.post(AIRPLANE_URL, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
 
 class AuthenticatedFlightsTest(TestCase):
     def setUp(self):
@@ -350,7 +361,7 @@ class AuthenticatedFlightsTest(TestCase):
     def test_retrieve_flight_by_id(self):
         flight = flight_sample()
 
-        url = reverse('airport:flight-detail', args=(flight.id,))
+        url = reverse("airport:flight-detail", args=(flight.id,))
 
         response = self.client.get(url)
         serializer = FlightDetailSerializer(flight)
@@ -427,8 +438,12 @@ class AuthenticatedCrewTest(TestCase):
         self.assertNotIn(serializer_2.data, response.data["results"])
 
     def test_filter_crews_by_roles(self):
-        crew_1 = crew_sample(first_name="Eliot", last_name="Wang", role=Crew.Roles.CAPTAIN)
-        crew_2 = crew_sample(first_name="Kate", last_name="Smith", role=Crew.Roles.STEWARD)
+        crew_1 = crew_sample(
+            first_name="Eliot", last_name="Wang", role=Crew.Roles.CAPTAIN
+        )
+        crew_2 = crew_sample(
+            first_name="Kate", last_name="Smith", role=Crew.Roles.STEWARD
+        )
 
         response = self.client.get(
             CREW_URL,
@@ -444,7 +459,7 @@ class AuthenticatedCrewTest(TestCase):
     def test_retrieve_crews_by_id(self):
         crew = crew_sample()
 
-        url = reverse('airport:crew-detail', args=(crew.id,))
+        url = reverse("airport:crew-detail", args=(crew.id,))
 
         response = self.client.get(url)
         serializer = CrewSerializer(crew)
@@ -462,6 +477,7 @@ class AuthenticatedCrewTest(TestCase):
         response = self.client.post(CREW_URL, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
 
 class AdminAirplanesTest(TestCase):
     def setUp(self):
@@ -574,7 +590,9 @@ class AdminAirplanesTest(TestCase):
             self.assertEqual(result[key], getattr(crew, key))
 
     def test_create_route(self):
-        airport_1 = airport_sample(name="National Airport", latitude=51.5007, longitude=0.1246)
+        airport_1 = airport_sample(
+            name="National Airport", latitude=51.5007, longitude=0.1246
+        )
         airport_2 = airport_sample(name="Airport", latitude=40.6892, longitude=74.0445)
 
         payload = {

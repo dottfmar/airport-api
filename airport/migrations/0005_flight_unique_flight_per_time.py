@@ -6,12 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('airport', '0004_alter_ticket_flight_alter_ticket_order'),
+        ("airport", "0004_alter_ticket_flight_alter_ticket_order"),
     ]
 
     operations = [
         migrations.AddConstraint(
-            model_name='flight',
-            constraint=models.UniqueConstraint(fields=('route', 'airplane', 'departure_time', 'arrival_time'), name='unique_flight_per_time'),
+            model_name="flight",
+            constraint=models.UniqueConstraint(
+                fields=("route", "airplane", "departure_time", "arrival_time"),
+                name="unique_flight_per_time",
+            ),
         ),
     ]
