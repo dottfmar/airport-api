@@ -39,9 +39,9 @@ airplane_get_parameters = [
         description="Search airplanes by number of rows.",
         examples=[
             OpenApiExample(
-                name="25 rows example",
-                value=25,
-                summary="Filter airplanes with 25 rows.",
+                name="30 rows example",
+                value=30,
+                summary="Filter airplanes with 30 rows.",
             ),
         ],
     ),
@@ -68,22 +68,16 @@ airplane_get_responses = {
                 "Filter by name example response",
                 value=[
                     {
-                        "id": 1,
-                        "name": "Boeing 737",
-                        "airplane_type": "Narrow-body",
-                        "total_number_of_seats": 1400,
-                    },
-                    {
-                        "id": 5,
-                        "name": "Boeing 777",
-                        "airplane_type": "Wide-body",
-                        "total_number_of_seats": 540,
-                    },
-                    {
-                        "id": 7,
+                        "id": 6,
                         "name": "Boeing 787 Dreamliner",
                         "airplane_type": "Wide-body",
-                        "total_number_of_seats": 450,
+                        "total_number_of_seats": 360,
+                    },
+                    {
+                        "id": 2,
+                        "name": "Boeing Business Jet",
+                        "airplane_type": "Business",
+                        "total_number_of_seats": 16,
                     },
                 ],
                 summary="An example response with a list of airplanes with Boeing name.",
@@ -93,22 +87,10 @@ airplane_get_responses = {
                 value=[
                     {
                         "id": 6,
-                        "name": "Airbus A350",
-                        "airplane_type": "Wide-body",
-                        "total_number_of_seats": 495,
-                    },
-                    {
-                        "id": 5,
-                        "name": "Boeing 777",
-                        "airplane_type": "Wide-body",
-                        "total_number_of_seats": 540,
-                    },
-                    {
-                        "id": 7,
                         "name": "Boeing 787 Dreamliner",
                         "airplane_type": "Wide-body",
-                        "total_number_of_seats": 450,
-                    },
+                        "total_number_of_seats": 360,
+                    }
                 ],
                 summary="An example response with a list of airplanes with 9 seats in rows.",
             ),
@@ -116,28 +98,28 @@ airplane_get_responses = {
                 "Filter by number of rows example response",
                 value=[
                     {
-                        "id": 4,
-                        "name": "Sukhoi Superjet 100",
-                        "airplane_type": "Regional",
-                        "total_number_of_seats": 125,
+                        "id": 5,
+                        "name": "Airbus A319",
+                        "airplane_type": "Narrow-body",
+                        "total_number_of_seats": 180,
                     }
                 ],
-                summary="An example response with a list of airplanes with 25 rows.",
+                summary="An example response with a list of airplanes with 30 rows.",
             ),
             OpenApiExample(
                 "Filter by type example response",
                 value=[
                     {
-                        "id": 2,
+                        "id": 5,
+                        "name": "Airbus A319",
+                        "airplane_type": "Narrow-body",
+                        "total_number_of_seats": 180,
+                    },
+                    {
+                        "id": 4,
                         "name": "Airbus A320",
                         "airplane_type": "Narrow-body",
                         "total_number_of_seats": 210,
-                    },
-                    {
-                        "id": 1,
-                        "name": "Boeing 737",
-                        "airplane_type": "Narrow-body",
-                        "total_number_of_seats": 1400,
                     },
                 ],
                 summary="An example response with a list of airplanes 'Narrow-body' type example.",
@@ -335,9 +317,9 @@ flight_get_responses = {
                     {
                         "id": 1,
                         "route": "Kyiv (Ukraine) -> Lviv (Ukraine)",
-                        "airplane": "ATR 72",
-                        "departure_time": "2025-03-07T14:00:00+02:00",
-                        "arrival_time": "2025-03-07T16:00:00+02:00",
+                        "airplane": "Airbus A319",
+                        "departure_time": "2025-03-06T21:00:00+02:00",
+                        "arrival_time": "2025-03-06T23:00:00+02:00",
                         "crew": [
                             {
                                 "id": 1,
@@ -350,15 +332,11 @@ flight_get_responses = {
                                 "role": "Flight Attendant",
                             },
                             {
-                                "id": 8,
-                                "full_name": "William Carter",
-                                "role": "Co-Pilot",
+                                "id": 13,
+                                "full_name": "Zayne Roberts",
+                                "role": "Other staff",
                             },
-                            {
-                                "id": 9,
-                                "full_name": "Ava Nelson",
-                                "role": "Flight Attendant",
-                            },
+                            {"id": 14, "full_name": "Lucas White", "role": "Co-Pilot"},
                         ],
                     }
                 ],
@@ -369,9 +347,9 @@ flight_get_responses = {
                     {
                         "id": 1,
                         "route": "Kyiv (Ukraine) -> Lviv (Ukraine)",
-                        "airplane": "ATR 72",
-                        "departure_time": "2025-03-07T14:00:00+02:00",
-                        "arrival_time": "2025-03-07T16:00:00+02:00",
+                        "airplane": "Airbus A319",
+                        "departure_time": "2025-03-06T21:00:00+02:00",
+                        "arrival_time": "2025-03-06T23:00:00+02:00",
                         "crew": [
                             {
                                 "id": 1,
@@ -384,15 +362,11 @@ flight_get_responses = {
                                 "role": "Flight Attendant",
                             },
                             {
-                                "id": 8,
-                                "full_name": "William Carter",
-                                "role": "Co-Pilot",
+                                "id": 13,
+                                "full_name": "Zayne Roberts",
+                                "role": "Other staff",
                             },
-                            {
-                                "id": 9,
-                                "full_name": "Ava Nelson",
-                                "role": "Flight Attendant",
-                            },
+                            {"id": 14, "full_name": "Lucas White", "role": "Co-Pilot"},
                         ],
                     }
                 ],
