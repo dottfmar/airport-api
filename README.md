@@ -48,6 +48,8 @@ Password: 1234
 ### Extra
 Obtain access token via http://127.0.0.1:8000/user/token/
 
+Endpoint documentation is here: http://127.0.0.1:8000/api/v1/doc/swagger#/
+
 #### About calculating of distance between two airports
 
 I used for that Haversine formula. More details about it here: https://www.geeksforgeeks.org/haversine-formula-to-find-distance-between-two-points-on-a-sphere/
