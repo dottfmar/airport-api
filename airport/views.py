@@ -69,7 +69,9 @@ class AirplaneViewSet(viewsets.ModelViewSet):
         if rows:
             queryset = queryset.filter(rows=int(rows))
         if airplane_type:
-            queryset = queryset.filter(airplane_type__name__in=airplane_type.split(","))
+            queryset = queryset.filter(
+                airplane_type__name__in=airplane_type.split(",")
+            )
 
         return queryset.distinct()
 

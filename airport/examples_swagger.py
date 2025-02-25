@@ -1,5 +1,9 @@
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import OpenApiParameter, OpenApiExample, OpenApiResponse
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    OpenApiExample,
+    OpenApiResponse
+)
 
 from airport.serializers import (
     AirplaneListSerializer,
@@ -80,7 +84,6 @@ airplane_get_responses = {
                         "total_number_of_seats": 16,
                     },
                 ],
-                summary="An example response with a list of airplanes with Boeing name.",
             ),
             OpenApiExample(
                 "Filter by number of seats in rows example response",
@@ -92,7 +95,6 @@ airplane_get_responses = {
                         "total_number_of_seats": 360,
                     }
                 ],
-                summary="An example response with a list of airplanes with 9 seats in rows.",
             ),
             OpenApiExample(
                 "Filter by number of rows example response",
@@ -104,7 +106,6 @@ airplane_get_responses = {
                         "total_number_of_seats": 180,
                     }
                 ],
-                summary="An example response with a list of airplanes with 30 rows.",
             ),
             OpenApiExample(
                 "Filter by type example response",
@@ -122,7 +123,6 @@ airplane_get_responses = {
                         "total_number_of_seats": 210,
                     },
                 ],
-                summary="An example response with a list of airplanes 'Narrow-body' type example.",
             ),
         ],
     )
@@ -258,21 +258,41 @@ crew_get_responses = {
             OpenApiExample(
                 "Filter by first name example response",
                 value=[
-                    {"id": 1, "full_name": "Caleb Adams", "role": "Pilot in Command"}
+                    {
+                        "id": 1,
+                        "full_name": "Caleb Adams",
+                        "role": "Pilot in Command"
+                    }
                 ],
             ),
             OpenApiExample(
                 "Filter by last name example response",
                 value=[
-                    {"id": 1, "full_name": "Caleb Adams", "role": "Pilot in Command"}
+                    {
+                        "id": 1,
+                        "full_name": "Caleb Adams",
+                        "role": "Pilot in Command"
+                    }
                 ],
             ),
             OpenApiExample(
                 "Filter by role example response",
                 value=[
-                    {"id": 1, "full_name": "Caleb Adams", "role": "Pilot in Command"},
-                    {"id": 10, "full_name": "James Walker", "role": "Pilot in Command"},
-                    {"id": 16, "full_name": "Kate Smith", "role": "Pilot in Command"},
+                    {
+                        "id": 1,
+                        "full_name": "Caleb Adams",
+                        "role": "Pilot in Command"
+                    },
+                    {
+                        "id": 10,
+                        "full_name": "James Walker",
+                        "role": "Pilot in Command"
+                    },
+                    {
+                        "id": 16,
+                        "full_name": "Kate Smith",
+                        "role": "Pilot in Command"
+                    },
                 ],
             ),
         ],
@@ -336,7 +356,11 @@ flight_get_responses = {
                                 "full_name": "Zayne Roberts",
                                 "role": "Other staff",
                             },
-                            {"id": 14, "full_name": "Lucas White", "role": "Co-Pilot"},
+                            {
+                                "id": 14,
+                                "full_name": "Lucas White",
+                                "role": "Co-Pilot"
+                            },
                         ],
                     }
                 ],
@@ -366,7 +390,11 @@ flight_get_responses = {
                                 "full_name": "Zayne Roberts",
                                 "role": "Other staff",
                             },
-                            {"id": 14, "full_name": "Lucas White", "role": "Co-Pilot"},
+                            {
+                                "id": 14,
+                                "full_name": "Lucas White",
+                                "role": "Co-Pilot"
+                            },
                         ],
                     }
                 ],

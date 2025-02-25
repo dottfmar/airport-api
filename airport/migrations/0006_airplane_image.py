@@ -15,7 +15,9 @@ class Migration(migrations.Migration):
             model_name="airplane",
             name="image",
             field=models.ImageField(
-                blank=True, null=True, upload_to=airport.models.airplane_custom_path
+                blank=True,
+                null=True,
+                upload_to=airport.models.airplane_custom_path
             ),
         ),
     ]

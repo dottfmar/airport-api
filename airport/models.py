@@ -18,7 +18,8 @@ class AirplaneType(models.Model):
 def airplane_custom_path(instance, filename):
     _, extension = os.path.splitext(filename)
     return os.path.join(
-        "uploads/images/", f"{slugify(instance.name)}-{uuid.uuid4()}{extension}"
+        "uploads/images/",
+        f"{slugify(instance.name)}-{uuid.uuid4()}{extension}"
     )
 
 
@@ -27,7 +28,11 @@ class Airplane(models.Model):
     rows = models.IntegerField()
     seats_in_row = models.IntegerField()
     airplane_type = models.ForeignKey(AirplaneType, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to=airplane_custom_path, null=True, blank=True)
+    image = models.ImageField(
+        upload_to=airplane_custom_path,
+        null=True,
+        blank=True
+    )
 
     @property
     def total_number_of_seats(self):
@@ -111,7 +116,11 @@ class Airport(models.Model):
 
 
 class Route(models.Model):
-    source = models.ForeignKey(Airport, on_delete=models.CASCADE, related_name="source")
+    source = models.ForeignKey(
+        Airport,
+        on_delete=models.CASCADE,
+        related_name="source"
+    )
     destination = models.ForeignKey(
         Airport, on_delete=models.CASCADE, related_name="destination"
     )
@@ -125,7 +134,8 @@ class Route(models.Model):
         )
 
     def __str__(self):
-        return f"{self.source.city} ({self.source.country}) -> {self.destination.city} ({self.destination.country})"
+        return (f"{self.source.city} ({self.source.country})"
+                f" -> {self.destination.city} ({self.destination.country})")
 
 
 class Ticket(models.Model):
@@ -134,10 +144,19 @@ class Ticket(models.Model):
     flight = models.ForeignKey(
         "Flight", on_delete=models.CASCADE, related_name="tickets"
     )
-    order = models.ForeignKey("Order", on_delete=models.CASCADE, related_name="tickets")
+    order = models.ForeignKey(
+        "Order",
+        on_delete=models.CASCADE,
+        related_name="tickets"
+    )
 
     @staticmethod
-    def validate_value(value: int, max_value: int, error_message: str, error_to_raise):
+    def validate_value(
+            value: int,
+            max_value: int,
+            error_message: str,
+            error_to_raise
+    ):
         if not (1 <= value <= max_value):
             raise error_to_raise({error_message})
 
@@ -149,7 +168,10 @@ class Ticket(models.Model):
             ValueError,
         )
         Ticket.validate_value(
-            self.row, self.flight.airplane.rows, "Invalid row number", ValueError
+            self.row,
+            self.flight.airplane.rows,
+            "Invalid row number",
+            ValueError
         )
 
     class Meta:
@@ -161,7 +183,10 @@ class Ticket(models.Model):
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
 
     class Meta:
         ordering = ["-created_at"]

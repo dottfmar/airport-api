@@ -593,7 +593,11 @@ class AdminAirplanesTest(TestCase):
         airport_1 = airport_sample(
             name="National Airport", latitude=51.5007, longitude=0.1246
         )
-        airport_2 = airport_sample(name="Airport", latitude=40.6892, longitude=74.0445)
+        airport_2 = airport_sample(
+            name="Airport",
+            latitude=40.6892,
+            longitude=74.0445
+        )
 
         payload = {
             "source": airport_1.name,

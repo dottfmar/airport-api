@@ -147,7 +147,10 @@ class FlightSerializer(serializers.ModelSerializer):
         slug_field="name",
         queryset=Airplane.objects.all().select_related("airplane_type"),
     )
-    crew = serializers.PrimaryKeyRelatedField(queryset=Crew.objects.all(), many=True)
+    crew = serializers.PrimaryKeyRelatedField(
+        queryset=Crew.objects.all(),
+        many=True
+    )
 
     class Meta:
         model = Flight
@@ -187,7 +190,8 @@ class FlightSerializer(serializers.ModelSerializer):
             busy_crew = overlapping_flights.filter(crew=crew_member)
             if busy_crew.exists():
                 raise ValidationError(
-                    f"Some crew members is already assigned to another flight during this time."
+                    "Some crew members is already assigned"
+                    " to another flight during this time."
                 )
 
 
@@ -208,7 +212,9 @@ class FlightListSerializer(FlightSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         route = instance.route
-        formatted_route = f"{route.source.city} ({route.source.country}) -> {route.destination.city} ({route.destination.country})"
+        formatted_route = (f"{route.source.city} ({route.source.country})"
+                           f" -> {route.destination.city} "
+                           f"({route.destination.country})")
         representation["route"] = formatted_route
         return representation
 
