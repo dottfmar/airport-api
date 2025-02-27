@@ -85,8 +85,7 @@
         "name": "Embraer EMB-505 Phenom 300",
         "rows": 3,
         "seats_in_row": 2,
-        "airplane_type": 4,
-        "image": "uploads/images/embraer-emb-505-phenom-300-d89e9a48-e191-40c1-bead-bb3df32eb23f.jpeg"
+        "airplane_type": 4
     }
 },
 {
@@ -96,8 +95,7 @@
         "name": "Boeing Business Jet",
         "rows": 8,
         "seats_in_row": 2,
-        "airplane_type": 4,
-        "image": "uploads/images/boeing-business-jet-5f12c9c3-c1fb-4644-9217-2b42c0a59374.jpg"
+        "airplane_type": 4
     }
 },
 {
@@ -107,8 +105,7 @@
         "name": "Envoy Air",
         "rows": 10,
         "seats_in_row": 3,
-        "airplane_type": 3,
-        "image": "uploads/images/envoy-air-a31ef682-a1ba-4dea-960f-d6a5a5459ed6.png"
+        "airplane_type": 3
     }
 },
 {
@@ -118,8 +115,7 @@
         "name": "Airbus A320",
         "rows": 35,
         "seats_in_row": 6,
-        "airplane_type": 1,
-        "image": "uploads/images/airbus-a320-0882c053-fbb9-4a68-962c-ff01eeb581af.jpg"
+        "airplane_type": 1
     }
 },
 {
@@ -129,8 +125,7 @@
         "name": "Airbus A319",
         "rows": 30,
         "seats_in_row": 6,
-        "airplane_type": 1,
-        "image": "uploads/images/airbus-a319-85f15061-9823-4227-af26-bd2b87871567.jpg"
+        "airplane_type": 1
     }
 },
 {
@@ -140,8 +135,7 @@
         "name": "Boeing 787 Dreamliner",
         "rows": 40,
         "seats_in_row": 9,
-        "airplane_type": 2,
-        "image": "uploads/images/boeing-787-dreamliner-0abdb515-fbfd-4668-b32d-cee11c83113c.jpg"
+        "airplane_type": 2
     }
 },
 {
