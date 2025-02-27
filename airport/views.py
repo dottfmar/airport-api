@@ -38,7 +38,7 @@ class ObjectPagination(PageNumberPagination):
 
 
 class AirplaneViewSet(viewsets.ModelViewSet):
-    queryset = Airplane.objects.select_related()
+    queryset = Airplane.objects.all()
     serializer_class = AirplaneSerializer
     pagination_class = ObjectPagination
     filter_backends = [filters.OrderingFilter]
@@ -57,18 +57,13 @@ class AirplaneViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
 
-        name = self.request.query_params.get("name")
-        seats_in_row = self.request.query_params.get("seats_in_row")
-        rows = self.request.query_params.get("rows")
-        airplane_type = self.request.query_params.get("airplane_type")
-
-        if name:
+        if name := self.request.query_params.get("name"):
             queryset = queryset.filter(name__icontains=name)
-        if seats_in_row:
+        if seats_in_row := self.request.query_params.get("seats_in_row"):
             queryset = queryset.filter(seats_in_row=int(seats_in_row))
-        if rows:
+        if rows := self.request.query_params.get("rows"):
             queryset = queryset.filter(rows=int(rows))
-        if airplane_type:
+        if airplane_type := self.request.query_params.get("airplane_type"):
             queryset = queryset.filter(
                 airplane_type__name__in=airplane_type.split(",")
             )
@@ -114,15 +109,11 @@ class CrewViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
 
-        first_name = self.request.query_params.get("first_name")
-        last_name = self.request.query_params.get("last_name")
-        role = self.request.query_params.get("role")
-
-        if first_name:
+        if first_name := self.request.query_params.get("first_name"):
             queryset = queryset.filter(first_name__icontains=first_name)
-        if last_name:
+        if last_name := self.request.query_params.get("last_name"):
             queryset = queryset.filter(last_name__icontains=last_name)
-        if role:
+        if role := self.request.query_params.get("role"):
             if role in Crew.Roles:
                 queryset = queryset.filter(role=role)
             else:
@@ -153,15 +144,11 @@ class AirportViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
 
-        name = self.request.query_params.get("name")
-        country = self.request.query_params.get("country")
-        city = self.request.query_params.get("city")
-
-        if name:
+        if name := self.request.query_params.get("name"):
             queryset = queryset.filter(name__icontains=name)
-        if country:
+        if country := self.request.query_params.get("country"):
             queryset = queryset.filter(country__in=country.split(","))
-        if city:
+        if city := self.request.query_params.get("city"):
             queryset = queryset.filter(city__in=city.split(","))
 
         return queryset.distinct()
@@ -176,8 +163,7 @@ class AirportViewSet(viewsets.ModelViewSet):
 
 
 class RouteViewSet(viewsets.ModelViewSet):
-    queryset = Route.objects.all().select_related()
-    serializer_class = RouteSerializer
+    queryset = Route.objects.all()
     pagination_class = ObjectPagination
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
@@ -188,11 +174,7 @@ class RouteViewSet(viewsets.ModelViewSet):
 
 
 class FlightViewSet(viewsets.ModelViewSet):
-    queryset = (
-        Flight.objects.prefetch_related("crew")
-        .select_related("airplane")
-        .select_related("route")
-    )
+    queryset = Flight.objects.all()
     serializer_class = FlightSerializer
     pagination_class = ObjectPagination
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
@@ -211,14 +193,11 @@ class FlightViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
 
-        routes = self.request.query_params.get("routes")
-        airplanes = self.request.GET.get("airplanes")
-
-        if routes:
+        if routes := self.request.query_params.get("routes"):
             routes_ids = self._params_to_ints(routes)
             queryset = queryset.filter(route__id__in=routes_ids)
 
-        if airplanes:
+        if airplanes := self.request.GET.get("airplanes"):
             queryset = queryset.filter(airplane__name__in=airplanes.split(","))
 
         return queryset.distinct()

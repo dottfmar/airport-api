@@ -1,4 +1,3 @@
-import math
 import os
 import uuid
 
@@ -6,10 +5,11 @@ from django.db import models
 from django.utils.text import slugify
 
 from airport_service import settings
+from airport.utils import calculate_distance
 
 
 class AirplaneType(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=63)
 
     def __str__(self):
         return self.name
@@ -24,7 +24,7 @@ def airplane_custom_path(instance, filename):
 
 
 class Airplane(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=63)
     rows = models.IntegerField()
     seats_in_row = models.IntegerField()
     airplane_type = models.ForeignKey(AirplaneType, on_delete=models.CASCADE)
@@ -53,9 +53,9 @@ class Crew(models.Model):
         STEWARD = "STEWARD", "Flight Attendant"
         OTHER = "OTHER", "Other staff"
 
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    role = models.CharField(choices=Roles, max_length=100)
+    first_name = models.CharField(max_length=63)
+    last_name = models.CharField(max_length=63)
+    role = models.CharField(choices=Roles, max_length=63)
 
     @property
     def full_name(self):
@@ -85,31 +85,16 @@ class Flight(models.Model):
 
 
 class Airport(models.Model):
-    name = models.CharField(max_length=100)
-    city = models.CharField(max_length=100)
-    country = models.CharField(max_length=100)
+    name = models.CharField(max_length=63)
+    city = models.CharField(max_length=63)
+    country = models.CharField(max_length=63)
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
 
-    def calculate_distance(self, airport):
-        earth_radius = 6371
-
-        latitude_1 = math.radians(self.latitude)
-        latitude_2 = math.radians(airport.latitude)
-
-        longitude_1 = math.radians(self.longitude)
-        longitude_2 = math.radians(airport.longitude)
-
-        distance_between_latitudes = latitude_2 - latitude_1
-        distance_between_longitudes = longitude_2 - longitude_1
-
-        a = math.sin(distance_between_latitudes / 2) ** 2 + math.sin(
-            distance_between_longitudes / 2
-        ) ** 2 * math.cos(latitude_1) * math.cos(latitude_2)
-
-        c = 2 * math.asin(math.sqrt(a))
-
-        return round(earth_radius * c)
+    def get_distance_to(self, airport):
+        return calculate_distance(
+            self.latitude, self.longitude, airport.latitude, airport.longitude
+        )
 
     def __str__(self):
         return f"{self.name},({self.city}, {self.country})"
@@ -119,10 +104,12 @@ class Route(models.Model):
     source = models.ForeignKey(
         Airport,
         on_delete=models.CASCADE,
-        related_name="source"
+        related_name="routes"
     )
     destination = models.ForeignKey(
-        Airport, on_delete=models.CASCADE, related_name="destination"
+        Airport,
+        on_delete=models.CASCADE,
+        related_name="destination_routes"
     )
 
     @property
@@ -134,8 +121,10 @@ class Route(models.Model):
         )
 
     def __str__(self):
-        return (f"{self.source.city} ({self.source.country})"
-                f" -> {self.destination.city} ({self.destination.country})")
+        return (
+            f"{self.source.city} ({self.source.country})"
+            f" -> {self.destination.city} ({self.destination.country})"
+        )
 
 
 class Ticket(models.Model):

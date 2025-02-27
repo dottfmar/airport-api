@@ -212,9 +212,11 @@ class FlightListSerializer(FlightSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         route = instance.route
-        formatted_route = (f"{route.source.city} ({route.source.country})"
-                           f" -> {route.destination.city} "
-                           f"({route.destination.country})")
+        formatted_route = (
+            f"{route.source.city} ({route.source.country})"
+            f" -> {route.destination.city} "
+            f"({route.destination.country})"
+        )
         representation["route"] = formatted_route
         return representation
 
