@@ -2,6 +2,7 @@ import os
 import uuid
 
 from django.db import models
+from django.db.models import UniqueConstraint
 from django.utils.text import slugify
 
 from airport_service import settings
@@ -66,7 +67,11 @@ class Crew(models.Model):
 
 
 class Flight(models.Model):
-    route = models.ForeignKey("Route", on_delete=models.CASCADE)
+    route = models.ForeignKey(
+        "Route",
+        on_delete=models.CASCADE,
+        related_name="flights"
+    )
     airplane = models.ForeignKey(Airplane, on_delete=models.CASCADE)
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
@@ -115,7 +120,7 @@ class Route(models.Model):
     @property
     def distance(self):
         return (
-            self.source.calculate_distance(self.destination)
+            self.source.get_distance_to(self.destination)
             if self.source and self.destination
             else None
         )
@@ -164,7 +169,12 @@ class Ticket(models.Model):
         )
 
     class Meta:
-        unique_together = ["row", "seat", "flight"]
+        constraints = [
+            UniqueConstraint(
+                fields=["row", "seat", "flight"],
+                name="unique_flight_row_seat",
+            )
+        ]
 
     def __str__(self):
         return f"Ticket: {self.flight}"
@@ -174,7 +184,8 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="orders"
     )
 
     class Meta:

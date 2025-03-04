@@ -140,12 +140,12 @@ class RouteDetailSerializer(RouteSerializer):
 
 class FlightSerializer(serializers.ModelSerializer):
     route = serializers.SlugRelatedField(
-        queryset=Route.objects.all().select_related("source", "destination"),
+        queryset=Route.objects.select_related("source", "destination"),
         slug_field="id",
     )
     airplane = serializers.SlugRelatedField(
         slug_field="name",
-        queryset=Airplane.objects.all().select_related("airplane_type"),
+        queryset=Airplane.objects.select_related("airplane_type"),
     )
     crew = serializers.PrimaryKeyRelatedField(
         queryset=Crew.objects.all(),
@@ -279,6 +279,9 @@ class OrderSerializer(serializers.ModelSerializer):
         with transaction.atomic():
             tickets_data = validated_data.pop("tickets")
             order = Order.objects.create(**validated_data)
-            for ticket_data in tickets_data:
-                Ticket.objects.create(order=order, **ticket_data)
+            ticket_instances = [
+                Ticket(order=order, **ticket_data) for ticket_data in tickets_data
+            ]
+            Ticket.objects.bulk_create(ticket_instances)
+
             return order

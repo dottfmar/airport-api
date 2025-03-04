@@ -11,7 +11,6 @@ from rest_framework.permissions import (
 from rest_framework.response import Response
 
 from airport import examples_swagger
-from airport.permissions import IsAdminOrIfAuthenticatedReadOnly
 from airport.models import Airplane, Crew, Airport, Route, Flight, Order
 from airport.serializers import (
     AirplaneSerializer,
@@ -42,7 +41,6 @@ class AirplaneViewSet(viewsets.ModelViewSet):
     serializer_class = AirplaneSerializer
     pagination_class = ObjectPagination
     filter_backends = [filters.OrderingFilter]
-    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
     ordering_fields = ["name"]
 
     def get_serializer_class(self):
@@ -52,10 +50,10 @@ class AirplaneViewSet(viewsets.ModelViewSet):
             return AirplaneDetailSerializer
         if self.action == "upload_image":
             return AirplaneImageSerializer
-        return AirplaneSerializer
+        return super().get_serializer_class()
 
     def get_queryset(self):
-        queryset = self.queryset
+        queryset = super().get_queryset()
 
         if name := self.request.query_params.get("name"):
             queryset = queryset.filter(name__icontains=name)
@@ -99,15 +97,14 @@ class CrewViewSet(viewsets.ModelViewSet):
     queryset = Crew.objects.all()
     serializer_class = CrewSerializer
     pagination_class = ObjectPagination
-    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
     def get_serializer_class(self):
         if self.action == "list":
             return CrewListSerializer
-        return CrewSerializer
+        return super().get_serializer_class()
 
     def get_queryset(self):
-        queryset = self.queryset
+        queryset = super().get_queryset()
 
         if first_name := self.request.query_params.get("first_name"):
             queryset = queryset.filter(first_name__icontains=first_name)
@@ -134,15 +131,14 @@ class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
     serializer_class = AirportSerializer
     pagination_class = ObjectPagination
-    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
     def get_serializer_class(self):
         if self.action == "list":
             return AirportListSerializer
-        return AirportSerializer
+        return super().get_serializer_class()
 
     def get_queryset(self):
-        queryset = self.queryset
+        queryset = super().get_queryset()
 
         if name := self.request.query_params.get("name"):
             queryset = queryset.filter(name__icontains=name)
@@ -165,33 +161,32 @@ class AirportViewSet(viewsets.ModelViewSet):
 class RouteViewSet(viewsets.ModelViewSet):
     queryset = Route.objects.all()
     pagination_class = ObjectPagination
-    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
+    serializer_class = RouteSerializer
 
     def get_serializer_class(self):
         if self.action == "retrieve":
             return RouteDetailSerializer
-        return RouteSerializer
+        return super().get_serializer_class()
 
 
 class FlightViewSet(viewsets.ModelViewSet):
     queryset = Flight.objects.all()
     serializer_class = FlightSerializer
     pagination_class = ObjectPagination
-    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
     def get_serializer_class(self):
         if self.action == "list":
             return FlightListSerializer
         if self.action == "retrieve":
             return FlightDetailSerializer
-        return FlightSerializer
+        return super().get_serializer_class()
 
     @staticmethod
     def _params_to_ints(qs):
         return [int(str_id) for str_id in qs.split(",")]
 
     def get_queryset(self):
-        queryset = self.queryset
+        queryset = super().get_queryset()
 
         if routes := self.request.query_params.get("routes"):
             routes_ids = self._params_to_ints(routes)
@@ -218,7 +213,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     pagination_class = ObjectPagination
 
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
+        return super().get_queryset().filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
