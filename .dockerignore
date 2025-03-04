@@ -1,0 +1,10 @@
+__pycache__
+.env
+*.sqlite3
+.git/
+.gitignore
+.idea/
+.venv
+media
+db.sqlite3
+venv
